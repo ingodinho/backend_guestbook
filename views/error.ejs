@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Guestbook Home</title>
+		<link rel="stylesheet" href="/css/style.css" />
+	</head>
+  <body>
+    <h1>Kollege, hier stimmt etwas nicht</h1>
+    <p>folgende Sachen hast du Depp falsch gemacht</p>
+    <ul>
+      <% errors.forEach(error => { %>
+        <li>Deine Eingabe <%= error.value %> bei <%= error.param %> macht kein Sinn du Volldepp, guck das nochmal nach.</li>
+      <% }) %>
+    </ul>
+  </body>

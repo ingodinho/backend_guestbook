@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+form {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.input {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.input > * {
+  flex-basis: 100%;
+}
+
+.input > input {
+  display: block;
+  padding: 5px 0;
+}
