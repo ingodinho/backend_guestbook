@@ -6,6 +6,7 @@ const app = express();
 const PORT = 9000;
 
 const pathJSON = './data/entries.json';
+const pathIndex = './data/index.txt';
 
 const readJSONtoObj = (path) => {
 	return new Promise((resolve, reject) => {
@@ -19,17 +20,35 @@ const readJSONtoObj = (path) => {
 	});
 };
 
-const writeAsJson = (path,newArray) => {
-  const json = JSON.stringify(newArray);
-  return new Promise ((resolve, reject) => {
-    fs.writeFile(path, json,(error) => {
-      if(error) reject(err);
-      else {
-        resolve();
-      }
-    })
-  })
-}
+const writeAsJson = (path, newArray) => {
+	const json = JSON.stringify(newArray);
+	return new Promise((resolve, reject) => {
+		fs.writeFile(path, json, (error) => {
+			if (error) reject(err);
+			else {
+				resolve();
+			}
+		});
+	});
+};
+
+const readIndex = (path) => {
+	return new Promise((resolve, reject) => {
+		fs.readFile(path, (err, data) => {
+			if (err) reject(err);
+			else resolve(Number(data.toString()));
+		});
+	});
+};
+
+const writeIndex = (path, index) => {
+	return new Promise((resolve, reject) => {
+		fs.writeFile(path, index, (err) => {
+			if (err) reject(err);
+			else resolve();
+		});
+	});
+};
 
 app.set('view engine', 'ejs');
 
@@ -55,20 +74,30 @@ app.post(
 	body('message').isLength({ min: 3 }),
 	(req, res) => {
 		const newEntry = req.body;
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			res.render('error', { errors: errors.errors });
-			return;
-		}
-		readJSONtoObj(pathJSON)
-    .then((entryArray) => {
-			entryArray.push(newEntry);
-      return entryArray;
-		})
-    .then(newEntryArray => {
-      writeAsJson(pathJSON,newEntryArray);
-    })
-    .then(()=> res.redirect('/'))
+		readIndex(pathIndex)
+			.then((index) => {
+				newEntry.index = index + 1;
+				return index + 1;
+			})
+			.then((newIndex) => writeIndex(pathIndex, newIndex.toString()))
+			.then(() => {
+				const errors = validationResult(req);
+				if (!errors.isEmpty()) {
+					res.render('error', { errors: errors.errors });
+					return;
+				}
+			})
+			.then(() => {
+				return readJSONtoObj(pathJSON);
+			})
+			.then((entryArray) => {
+				entryArray.push(newEntry);
+				return entryArray;
+			})
+			.then((newEntryArray) => {
+				writeAsJson(pathJSON, newEntryArray);
+			})
+			.then(() => res.redirect('/'));
 	}
 );
 
