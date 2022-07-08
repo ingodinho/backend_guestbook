@@ -97,7 +97,8 @@ app.post(
 			.then((newEntryArray) => {
 				writeAsJson(pathJSON, newEntryArray);
 			})
-			.then(() => res.redirect('/'));
+			.then(() => res.redirect('/'))
+			.catch(err => console.log(err));
 	}
 );
 
